@@ -55,8 +55,18 @@ def nearest_neighbour(src, dst):
   distances, indices = neigh.kneighbors(src, return_distance=True)
   return distances.ravel(), indices.ravel()
 
-''' ICP finds best fit transform that maps points a on to points y
-'''
+"""
+ICP finds best fit transform that maps points X on to points Y.
+Y matrix is target (fixed set of features), while X is a set to align to Y.
+Args:
+  X: matrix of points to align to Y
+  Y: matrix of target points
+  init_pose: the initial transformation
+  max_iterations: to stop iterations at
+  tolerance: convergence criteria
+Returns:
+  T: final transformation matrix if any
+"""
 def icp(x, y, init_pose=None, max_iterations=20, error=0.01, tolerance=0.01):
   assert x.shape == y.shape
   
