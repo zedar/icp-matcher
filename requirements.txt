@@ -1,0 +1,7 @@
+wheel
+
+numpy
+sklearn
+scipy
+
+flask
