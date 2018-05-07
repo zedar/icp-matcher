@@ -9,7 +9,8 @@ from sklearn.neighbors import NearestNeighbors
 ''' Calculate the least squares best fit transform that maps matrix x and y in m spatial dimensions
 '''
 def fit_point_sets(x, y):
-  assert x.shape == y.shape
+  assert x.shape[0] <= y.shape[0]
+  assert x.shape[1] == y.shape[1]
 
   # dimension of points
   m = x.shape[1]
@@ -48,7 +49,8 @@ def fit_point_sets(x, y):
 ''' Find the nearest (Euclidian) neighbour in dst for each point in src
 '''
 def nearest_neighbour(src, dst):
-  assert src.shape == dst.shape
+  assert src.shape[0] <= dst.shape[0]
+  assert src.shape[1] == dst.shape[1]
 
   neigh = NearestNeighbors(n_neighbors=1)
   neigh.fit(dst)
@@ -68,9 +70,10 @@ Returns:
   T: final transformation matrix if any
 """
 def icp(x, y, init_pose=None, max_iterations=20, error=0.01, tolerance=0.01):
-  assert x.shape == y.shape
+  assert x.shape[0] <= y.shape[0]
+  assert x.shape[1] == y.shape[1]
   
-  # get dimensions
+  # number of features describing every point in both, target (Y) and reference (X) point sets
   m = x.shape[1]
 
   # make points homogeneous, copy them to maintain the originals
@@ -106,7 +109,9 @@ def icp(x, y, init_pose=None, max_iterations=20, error=0.01, tolerance=0.01):
     if mean_error < error:
       break
     prev_error = mean_error
-
+  
+  print('Mean error:', mean_error, ' after iteration:', i)
+  
   # calculate final transformation
   x_src = np.ones((x.shape[0], x.shape[1]))
   x_src[:,:] = np.copy(x)

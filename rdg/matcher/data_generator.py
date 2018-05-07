@@ -48,13 +48,15 @@ Returns:
 def generate_data_sin(start=0.0, end=3.0, step=0.2):
   t = np.arange(start, end, step)
   ty = np.sin(t)
+  
   a = np.array([t, ty])
   b = np.ones((a.shape[1], a.shape[0]+1))
   b[:,:-1] = np.copy(a.T)
   tsx = 1.5
   tsy = np.sin(1.5)-0.2
   b = np.vstack([b, [tsx, tsy, 2.0]])
-  print('B.shape:', b.shape)
+  b = np.matrix(b)
+  
   return np.matrix([t, ty]).T
 
 ''' Shufle some points in matrix randomly
