@@ -67,7 +67,10 @@ Args:
   max_iterations: to stop iterations at
   tolerance: convergence criteria
 Returns:
-  T: final transformation matrix if any
+  T: final transformation matrix
+  distances: distance for every point to the neerest neighbour
+  i: number of iterations
+  mean_error: mean error for the last iteration
 """
 def icp(x, y, init_pose=None, max_iterations=20, error=0.01, tolerance=0.01):
   assert x.shape[0] <= y.shape[0]
@@ -117,5 +120,5 @@ def icp(x, y, init_pose=None, max_iterations=20, error=0.01, tolerance=0.01):
   x_src[:,:] = np.copy(x)
   t, _, _ = fit_point_sets(x_src, src[:m,:].T)
 
-  return t, distances, i
+  return t, distances, i, mean_error
 

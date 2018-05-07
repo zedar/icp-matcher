@@ -17,7 +17,7 @@ def generate_transformations():
   print('Rotation matrix: \n', t0)
 
   # calculate translation vector
-  t1 = np.matrix(scipy.stats.norm(loc=3, scale=3).rvs(size=(3,2)))
+  #t1 = np.matrix(scipy.stats.norm(loc=3, scale=3).rvs(size=(3,2)))
   t1 = np.matrix(scipy.stats.norm(loc=0.2, scale=0.1).rvs(size=(3,2)))
   print('Translation vector: \n', t1)
 
@@ -50,14 +50,16 @@ def generate_data_sin(start=0.0, end=3.0, step=0.2):
   ty = np.sin(t)
   
   a = np.array([t, ty])
-  b = np.ones((a.shape[1], a.shape[0]+1))
-  b[:,:-1] = np.copy(a.T)
+  # 2 additional columns. 1st=z-axis, 2nd=category
+  b = np.ones((a.shape[1], a.shape[0]+2))
+  b[:,:-2] = np.copy(a.T)
+  b[:,-1] = 10  # category 10
   tsx = 1.5
   tsy = np.sin(1.5)-0.2
-  b = np.vstack([b, [tsx, tsy, 2.0]])
+  b = np.vstack([b, [tsx, tsy, 1.0, 20]]) # z=1.0, category=20
   b = np.matrix(b)
-  
-  return np.matrix([t, ty]).T
+  return b
+  #return np.matrix([t, ty]).T
 
 ''' Shufle some points in matrix randomly
 :param x: matrix to shuple same data
@@ -73,19 +75,33 @@ def shuffle_data(x):
   # return matrix with shufled indices
   return x[idx]
 
-''' Transform sample data by rotation, translation and scaling
-:param matrix x: matrix of data to transform
-:param t0: rotation matrix
-:param t1: transformation matrix
-:param k: scaling factor
-:return: matrix of transformed data
-'''
+""" 
+Transform sample data by rotation, translation and scaling
+Args:
+  x: matrix of data to transform
+  t0: rotation matrix
+  t1: translation matrix
+  k: scaling factor
+Returns:
+  matrix of transformed data
+"""
 def transform_data(x, t0, t1, k=1.0):
+  # extract first 2 features (x,y) coordinates and apply transformation to
+  s = np.zeros((x.shape[0], 2))
+  s[:,:] = np.copy(x[:,:2])
+  
+
   # apply an affine transformation to x
-  y = x * t0.T
+  #y = x * t0.T
+  y = s * t0.T
   #print('x shape: ', x.shape)
   #print('y shape: ', y.shape)
   #print('t1 shape: ', t1.shape)
   y[:,0] += t1[0,0]
   y[:,1] += t1[1,0]
-  return y*k
+  y = y*k
+
+  z = x.copy()
+  z[:,:2] = np.copy(y)
+  return z
+  #return y

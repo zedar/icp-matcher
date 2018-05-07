@@ -11,12 +11,14 @@ def main():
   # target point set S
   S = dg.generate_data_sin(start=0, end=3, step=0.2)
   print('Input matrix S: ', type(S), ' shape:', S.shape)
+  print('Input matrix S:\n', S)
   
   # reference point set M, to be aligned to S
   M = dg.generate_data_sin(start=1, end=2.8, step=0.2)
   t0, t1, k = dg.generate_transformations()
   M = dg.transform_data(M, t0, t1, k=1.0)
   print('Input matrix M: ', type(M), ' shape:', M.shape)
+  print('Input matrix M:\n', M)
 
   # plot target point set S and point set M to align to S
   #plot_point_sets(S, M)
@@ -24,7 +26,7 @@ def main():
   # shuffle points in y matrix
   M_shuffled = dg.shuffle_data(M)
 
-  t, distances, iterations = icp.icp(M, S, max_iterations=2000, error=1e-2, tolerance=1e-9)
+  t, distances, iterations, mean_error = icp.icp(M, S, max_iterations=2000, error=1e-2, tolerance=1e-9)
 
   print('Translation matrix:\n', t)
 
@@ -33,8 +35,6 @@ def main():
   aligned_ys = np.dot(t, aligned_ys.T)
   aligned_ys = aligned_ys.T
   aligned_ys = aligned_ys[:,:2]
-  #print('Aligned ys:\n', aligned_ys) 
-  #print('xs:\n', x)
 
   plot_point_sets(S, M, aligned_ys)
 
