@@ -3,5 +3,6 @@ wheel
 numpy
 sklearn
 scipy
+shapely
 
 flask
